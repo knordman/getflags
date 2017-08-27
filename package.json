@@ -1,0 +1,19 @@
+{
+  "name": "getflags",
+  "version": "1.0.0",
+  "description": "Parse args into short and long options",
+  "main": "index.js",
+  "scripts": {
+    "test": "find . -name '*_test.js' | xargs mocha"
+  },
+  "keywords": [
+    "getopt",
+    "flags"
+  ],
+  "author": "Kristian Nordman",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.5.0",
+    "mocha": "^3.5.0"
+  }
+}
