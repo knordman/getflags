@@ -10,6 +10,10 @@
     "getopt",
     "flags"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/knordman/getflags.git"
+  },
   "author": "Kristian Nordman",
   "license": "MIT",
   "devDependencies": {

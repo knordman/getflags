@@ -2,10 +2,10 @@
 let process = require('process');
 let testit = require('./index');
 
-console.log(process.argv.splice(2))
+//console.log(process.argv.splice(2))
 
 console.log(
-    testit(process.argv.splice(2), [
+    testit(process.argv, [
         {
             long: 'some',
             withValue: true
