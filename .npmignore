@@ -1,2 +1,4 @@
 getflags_test.js
-.eslintrc
+.eslintrc.json
+.vscode
+test.js
