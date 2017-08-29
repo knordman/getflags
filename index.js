@@ -10,67 +10,55 @@ module.exports = function(args, configuration) {
         }
     });
 
-    let argsString = args.join(' ');
-    let parsedElements = argsString.split(
-        /(-){1,2}(\w+)(?:[\s=](?:(?:"([^"]*)")|(?:'([^']*)')|([^\s-]+)))?/
-    );
-    let numberOfParsedElements = parsedElements.length;
     let understoodFlags = {};
+    let numberOfArgs = args.length;
+    for (let i = 0; i < numberOfArgs;) {
+        let argBehindCurrent = (numberOfArgs - i - 1) > 0;
 
-    for (let i = 0; i < numberOfParsedElements;) {
-        let numberOfElementsBehindCurrent = numberOfParsedElements - i - 1;
-        if (parsedElements[i] == '-' && numberOfElementsBehindCurrent >= 4) {
-            let flagCandidate = parsedElements[i+1];
-            let value;
-            let numberOfUndefinedValues = 0;
-            [
-                parsedElements[i+2], // Quoted with ""
-                parsedElements[i+3], // Quoted with ''
-                parsedElements[i+4]  // Unescaped
-            ].forEach(valueCandidate => {
-                if (valueCandidate === undefined) {
-                    numberOfUndefinedValues++;
-                }
-                else {
-                    value = valueCandidate;
-                }
-            });
+        let flagValueMatch = args[i].match(/-{1,2}(\w+)(?:=(.*))?/);
+        if (!flagValueMatch) {
+            // Completely failed, move forward one and try again
+            i++;
+            continue;
+        }
+        
+        let flag = flagValueMatch[1];
+        let value = flagValueMatch[2];
 
-            // For correctly identified flags, at least two values should be undefined
-            if (numberOfUndefinedValues < 2) {
-                i++;
-                continue;
-            }
-
-            if (!configuredFlags[flagCandidate]) {
-                throw new Error(`unknown flag: ${flagCandidate}`);
-            }
-
-            if (configuredFlags[flagCandidate].withValue) {
-                if (value === undefined) {
-                    throw new Error(`missing value for flag: ${flagCandidate}`);
+        if (value === undefined) {
+            if (argBehindCurrent) {
+                let valueMatch = args[i+1].match(/^[^-].*/);
+                if (valueMatch) {
+                    value = valueMatch[0];
+                    i++;
                 }
             }
-            else {
-                if (value !== undefined) {
-                    throw new Error(`value given for flag that expects no value: ${flagCandidate}`);
-                }
-                value = true;
-            }
+        }
+        i++;
 
-            let longFlag = configuredFlags[flagCandidate].long;
-            let shortFlag = configuredFlags[flagCandidate].short;
-            if (longFlag && flagCandidate === shortFlag) {
-                understoodFlags[longFlag] = value;
-            }
-            else {
-                understoodFlags[flagCandidate] = value;
-            }
+        if (!configuredFlags[flag]) {
+            throw new Error(`unknown flag: ${flag}`);
+        }
 
-            i += 5;
+        if (configuredFlags[flag].withValue) {
+            if (value === undefined) {
+                throw new Error(`missing value for flag: ${flag}`);
+            }
         }
         else {
-            i++;
+            if (value !== undefined) {
+                throw new Error(`value given for flag that expects no value: ${flag}`);
+            }
+            value = true;
+        }
+
+        let longFlag = configuredFlags[flag].long;
+        let shortFlag = configuredFlags[flag].short;
+        if (longFlag && flag === shortFlag) {
+            understoodFlags[longFlag] = value;
+        }
+        else {
+            understoodFlags[flag] = value;
         }
     }
 
