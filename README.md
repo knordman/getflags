@@ -27,6 +27,12 @@ console.log(
             withValue: true
         },
         {
+            short: 'c',
+            long: 'collector',
+            withValue: true,
+            collectInArray: true
+        },
+        {
             long: 'better',
             withValue: true
         },
@@ -50,7 +56,11 @@ console.log(
 Saving that into `test.js` and running with:
 
 ```bash
-node test.js --some 1 --better=some-text --a --function -g 'and some with space'
+node test.js --some 1 \
+    --collector first \
+    --better=some-text \
+    --a -c='second collector' \
+    --function -g 'and some with space'
 ```
 
 returns:
@@ -58,6 +68,7 @@ returns:
 ```js
 { 
     some: '1',
+    collector: ['first', 'second collector'],
     better: 'some-text',
     and: true,
     function: true,

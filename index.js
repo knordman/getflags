@@ -54,12 +54,20 @@ module.exports = function(args, configuration) {
 
         let longFlag = configuredFlags[flag].long;
         let shortFlag = configuredFlags[flag].short;
-        if (longFlag && flag === shortFlag) {
-            understoodFlags[longFlag] = value;
+        let toSetFlag = (longFlag && flag === shortFlag) ? longFlag : flag;
+
+        if (configuredFlags[toSetFlag].collectInArray) {
+            if (understoodFlags[toSetFlag]) {
+                understoodFlags[toSetFlag].push(value);
+            }
+            else {
+                understoodFlags[toSetFlag] = [value];
+            }
         }
         else {
-            understoodFlags[flag] = value;
+            understoodFlags[toSetFlag] = value;
         }
+
     }
 
     return understoodFlags;

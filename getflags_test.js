@@ -258,15 +258,43 @@ describe('Long options', function() {
 
 });
 
+describe('Arrayed options', function() {
+
+    it('collects in an array the collectInArray flags', function(){
+        assert.deepStrictEqual(
+            getflags(['--server', 'first', '--server=second'], 
+                [
+                    {
+                        long: 'server',
+                        withValue: true,
+                        collectInArray: true
+                    }
+                ]
+            ),
+            {
+                server: ['first', 'second']
+            }
+        );
+    });
+
+});
+
+
 describe('Mixed options', function() {
 
     it('merges everything accordingly', function(){
         assert.deepStrictEqual(
-            getflags(['--some', '1', '--better=some-text', '--a', '--function', '-g', 'and some with space'], 
+            getflags(['--some', '1', '--collector', 'first', '--better=some-text', '--a', '-c=1', '--function', '-g', 'and some with space'], 
                 [
                     {
                         long: 'some',
                         withValue: true
+                    },
+                    {
+                        short: 'c',
+                        long: 'collector',
+                        withValue: true,
+                        collectInArray: true
                     },
                     {
                         long: 'better',
@@ -292,7 +320,8 @@ describe('Mixed options', function() {
                 better: 'some-text',
                 another: true,
                 'function': true,
-                g: 'and some with space'
+                g: 'and some with space',
+                collector: ['first', '1']
             }
         );
     }); 
@@ -313,6 +342,5 @@ describe('Mixed options', function() {
             }
         );
     });
-
 
 });
