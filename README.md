@@ -1,5 +1,7 @@
 # getflags
 
+[![npm](https://img.shields.io/npm/v/getflags.svg)]()
+
 Parses arguments into long and short flags, with or without value. 
 
 ## Install
