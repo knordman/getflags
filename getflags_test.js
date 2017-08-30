@@ -128,6 +128,31 @@ describe('Short options', function() {
         });
     });
 
+    describe('with required options', function() {
+        it('throws an exception when missing', function(){
+            assert.throws(
+                () => {
+                    getflags(['-r', 'first'], 
+                        [
+                            {
+                                short: 'r',
+                                withValue: true,
+                                required: true
+                            },
+                            {
+                                short: 'b',
+                                withValue: true,
+                                required: true
+                            }
+                        ]
+                    );
+                },
+                Error
+            );
+        });
+    });
+
+
 });
 
 describe('Long options', function() {
@@ -254,7 +279,31 @@ describe('Long options', function() {
                 Error
             );
         });
-    });    
+    });
+
+    describe('with required options', function() {
+        it('throws an exception when missing', function(){
+            assert.throws(
+                () => {
+                    getflags(['--myRequiredOption', 'first'], 
+                        [
+                            {
+                                long: 'myRequiredOption',
+                                withValue: true,
+                                required: true
+                            },
+                            {
+                                long: 'myOtherRequiredOption',
+                                withValue: true,
+                                required: true
+                            }
+                        ]
+                    );
+                },
+                Error
+            );
+        });
+    });
 
 });
 
@@ -278,7 +327,6 @@ describe('Arrayed options', function() {
     });
 
 });
-
 
 describe('Mixed options', function() {
 

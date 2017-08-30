@@ -25,14 +25,17 @@ let getflags = require('getflags');
 console.log(
     getflags(process.argv.splice(2), [
         {
-            long: 'some',
-            withValue: true
+            short: 'c',             /* Short flag */
+            long: 'collector',      /* Long equivalent flag */
+            withValue: true,        /* Flag requires a value */
+            collectInArray: true,   /* When same flag is given multiple times, 
+                                       each value is pushed to an array, otherwise
+                                       the last given value will set the flag value */
+            required: true          /* Flag is required */
         },
         {
-            short: 'c',
-            long: 'collector',
-            withValue: true,
-            collectInArray: true
+            long: 'some',
+            withValue: true
         },
         {
             long: 'better',
@@ -45,7 +48,8 @@ console.log(
         {
             short: 'a',
             long: 'and',
-            withValue: false
+            withValue: false,
+            required: true
         },
         {
             short: 'g',

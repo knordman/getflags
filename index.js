@@ -1,12 +1,21 @@
 
 module.exports = function(args, configuration) {
     let configuredFlags = {};
+    let requiredFlags = [];
     configuration.forEach(flagConfiguration => {
         if (flagConfiguration.short) {
             configuredFlags[flagConfiguration.short] = flagConfiguration;
         }
         if (flagConfiguration.long) {
             configuredFlags[flagConfiguration.long] = flagConfiguration;
+        }
+        if (flagConfiguration.required) {
+            if (flagConfiguration.long) {
+                requiredFlags.push(flagConfiguration.long);
+            }
+            else if (flagConfiguration.short) {
+                requiredFlags.push(flagConfiguration.short);
+            }
         }
     });
 
@@ -67,8 +76,25 @@ module.exports = function(args, configuration) {
         else {
             understoodFlags[toSetFlag] = value;
         }
-
     }
+
+    requiredFlags.forEach(flag => {
+        if (!understoodFlags[flag]) {
+            let configuredFlag = configuredFlags[flag];
+            let flagString;
+            if (configuredFlag.long) {
+                flagString = `--${configuredFlag.long}`;
+                if (configuredFlag.short) {
+                    flagString += ` (-${configuredFlag.short})`;
+                }
+            }
+            else {
+                flagString = `-${configuredFlag.short}`;
+            }
+
+            throw new Error(`required flag missing: ${flagString}`);
+        }
+    });
 
     return understoodFlags;
 };
