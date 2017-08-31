@@ -1,10 +1,12 @@
 {
   "name": "getflags",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Parse args into short/long options with/without value",
   "main": "index.js",
   "scripts": {
-    "test": "find . -name '*_test.js' | xargs mocha -b"
+    "test": "find . -maxdepth 1 -name '*_test.js' | xargs mocha -b",
+    "coverage": "find . -maxdepth 1 -name '*_test.js' | xargs nyc --reporter=html --reporter=text mocha",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "getopt",
@@ -17,7 +19,9 @@
   "author": "Kristian Nordman",
   "license": "MIT",
   "devDependencies": {
+    "coveralls": "^2.13.1",
     "eslint": "^4.5.0",
-    "mocha": "^3.5.0"
+    "mocha": "^3.5.0",
+    "nyc": "^11.1.0"
   }
 }

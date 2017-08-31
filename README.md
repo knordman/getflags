@@ -1,6 +1,7 @@
 # getflags
 
-[![npm](https://img.shields.io/npm/v/getflags.svg)]()
+[![npm](https://img.shields.io/npm/v/getflags.svg)](https://www.npmjs.com/package/getflags)
+[![Coverage Status](https://coveralls.io/repos/github/knordman/getflags/badge.svg?branch=master)](https://coveralls.io/github/knordman/getflags?branch=master)
 
 Parses arguments into long and short flags, with or without value. 
 

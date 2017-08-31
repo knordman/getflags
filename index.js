@@ -24,7 +24,7 @@ module.exports = function(args, configuration) {
     for (let i = 0; i < numberOfArgs;) {
         let argBehindCurrent = (numberOfArgs - i - 1) > 0;
 
-        let flagValueMatch = args[i].match(/-{1,2}(\w+)(?:=(.*))?/);
+        let flagValueMatch = args[i].match(/^-{1,2}(\w+)(?:=(.*))?/);
         if (!flagValueMatch) {
             // Completely failed, move forward one and try again
             i++;

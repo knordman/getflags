@@ -2,3 +2,6 @@ getflags_test.js
 .eslintrc.json
 .vscode
 test.js
+coverage
+.nyc_output
+.coveralls.yml

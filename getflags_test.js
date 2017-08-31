@@ -129,6 +129,24 @@ describe('Short options', function() {
     });
 
     describe('with required options', function() {
+
+        it('goes ok when option is given', function(){
+            assert.deepStrictEqual(
+                getflags(['-r', 'first'], 
+                    [
+                        {
+                            short: 'r',
+                            withValue: true,
+                            required: true
+                        },
+                    ]
+                ),
+                {
+                    r: 'first'
+                }
+            );
+        });
+
         it('throws an exception when missing', function(){
             assert.throws(
                 () => {
@@ -282,6 +300,23 @@ describe('Long options', function() {
     });
 
     describe('with required options', function() {
+        it('goes ok when option is given', function(){
+            assert.deepStrictEqual(
+                getflags(['--myRequiredOption', 'first'], 
+                    [
+                        {
+                            long: 'myRequiredOption',
+                            withValue: true,
+                            required: true
+                        },
+                    ]
+                ),
+                {
+                    myRequiredOption: 'first'
+                }
+            );
+        });
+
         it('throws an exception when missing', function(){
             assert.throws(
                 () => {
@@ -328,9 +363,64 @@ describe('Arrayed options', function() {
 
 });
 
+describe('Required option error messages', function() {
+
+    it('includes both long and short name when configured', function(){
+        assert.throws(
+            () => {
+                getflags([], 
+                    [
+                        {
+                            short: 'r',
+                            long: 'required',
+                            required: true
+                        }
+                    ]
+                );
+            },
+            /: --required \(-r\)/
+        );
+    });
+
+    it('includes only long name when no short configured', function(){
+        assert.throws(
+            () => {
+                getflags([], 
+                    [
+                        {
+                            long: 'required',
+                            required: true
+                        }
+                    ]
+                );
+            },
+            /: --required$/
+        );
+    });
+
+    it('includes only short name when no long configured', function(){
+        assert.throws(
+            () => {
+                getflags([], 
+                    [
+                        {
+                            short: 'r',
+                            required: true
+                        }
+                    ]
+                );
+            },
+            /: -r$/
+        );
+    });
+
+
+});
+
+
 describe('Mixed options', function() {
 
-    it('merges everything accordingly', function(){
+    it('merges everything accordingly', function() {
         assert.deepStrictEqual(
             getflags(['--some', '1', '--collector', 'first', '--better=some-text', '--a', '-c=1', '--function', '-g', 'and some with space'], 
                 [
@@ -390,5 +480,37 @@ describe('Mixed options', function() {
             }
         );
     });
+
+    it('non flag matches are ignored', function(){
+        assert.deepStrictEqual(
+            getflags(['not-a-flag', '--example', 'long', 'not-this-either', '-e=short'], 
+                [
+                    {
+                        long: 'example',
+                        short: 'e',
+                        withValue: true
+                    }
+                ]
+            ),
+            {
+                example: 'short'
+            }
+        );
+    });
+
+    it('required option without short or long is ignored', function(){
+        assert.deepStrictEqual(
+            getflags([], 
+                [
+                    {
+                        required: true
+                    }
+                ]
+            ),
+            {
+            }
+        );
+    });
+
 
 });
