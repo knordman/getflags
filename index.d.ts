@@ -13,13 +13,13 @@ declare namespace getflags {
         /** Long flag alternative */
         long: string;
         /** Whether flag requires a value */
-        withValue: boolean;
+        withValue?: boolean;
         /** When same flag is given multiple times, each value is pushed to an array, otherwise the last given value will set the flag value */
-        collectInArray: boolean;
+        collectInArray?: boolean;
         /** Whether flag is required */
-        required: boolean;
+        required?: boolean;
         /** Default value given the flag when not specified */
-        default: string;
+        default?: string;
     }
     export type Configuration = ConfigurationEntry[];
 
