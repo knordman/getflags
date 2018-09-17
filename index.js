@@ -1,42 +1,48 @@
-
 module.exports = function(args, configuration) {
-    let configuredFlags = {};
-    let requiredFlags = [];
-    configuration.forEach(flagConfiguration => {
-        if (flagConfiguration.short) {
-            configuredFlags[flagConfiguration.short] = flagConfiguration;
+    const configuredFlags = {};
+    const requiredFlags = [];
+    const defaultFlags = {};
+    configuration.forEach(flagSetup => {
+        const flagKey = flagSetup.long ? flagSetup.long : flagSetup.short;
+        if (!flagKey) {
+            return;
         }
-        if (flagConfiguration.long) {
-            configuredFlags[flagConfiguration.long] = flagConfiguration;
+        const flagObject = Object.assign({}, { key: flagKey }, flagSetup);
+
+        if (flagSetup.long) {
+            configuredFlags[flagSetup.long] = flagObject;
         }
-        if (flagConfiguration.required) {
-            if (flagConfiguration.long) {
-                requiredFlags.push(flagConfiguration.long);
-            }
-            else if (flagConfiguration.short) {
-                requiredFlags.push(flagConfiguration.short);
-            }
+
+        if (flagSetup.short) {
+            configuredFlags[flagSetup.short] = flagObject;
+        }
+
+        if (flagSetup.required) {
+            requiredFlags.push(flagKey);
+        }
+        if (flagSetup.default) {
+            defaultFlags[flagKey] = flagSetup.default;
         }
     });
 
-    let understoodFlags = {};
-    let numberOfArgs = args.length;
-    for (let i = 0; i < numberOfArgs;) {
-        let argBehindCurrent = (numberOfArgs - i - 1) > 0;
+    const understoodFlags = {};
+    const numberOfArgs = args.length;
+    for (let i = 0; i < numberOfArgs; ) {
+        const argBehindCurrent = numberOfArgs - i - 1 > 0;
 
-        let flagValueMatch = args[i].match(/^-{1,2}(\w+)(?:=(.*))?/);
+        const flagValueMatch = args[i].match(/^-{1,2}([^=]+)(?:=(.*))?/);
         if (!flagValueMatch) {
             // Completely failed, move forward one and try again
             i++;
             continue;
         }
-        
-        let flag = flagValueMatch[1];
+
+        const flag = flagValueMatch[1];
         let value = flagValueMatch[2];
 
         if (value === undefined) {
             if (argBehindCurrent) {
-                let valueMatch = args[i+1].match(/^[^-].*/);
+                const valueMatch = args[i + 1].match(/^[^-].*/);
                 if (valueMatch) {
                     value = valueMatch[0];
                     i++;
@@ -53,46 +59,49 @@ module.exports = function(args, configuration) {
             if (value === undefined) {
                 throw new Error(`missing value for flag: ${flag}`);
             }
-        }
-        else {
+        } else {
             if (value !== undefined) {
                 throw new Error(`value given for flag that expects no value: ${flag}`);
             }
             value = true;
         }
 
-        let longFlag = configuredFlags[flag].long;
-        let shortFlag = configuredFlags[flag].short;
-        let toSetFlag = (longFlag && flag === shortFlag) ? longFlag : flag;
+        const flagKey = configuredFlags[flag].key;
 
-        if (configuredFlags[toSetFlag].collectInArray) {
-            if (understoodFlags[toSetFlag]) {
-                understoodFlags[toSetFlag].push(value);
+        if (configuredFlags[flagKey].collectInArray) {
+            if (understoodFlags[flagKey]) {
+                understoodFlags[flagKey].push(value);
+            } else {
+                understoodFlags[flagKey] = [value];
             }
-            else {
-                understoodFlags[toSetFlag] = [value];
-            }
-        }
-        else {
-            understoodFlags[toSetFlag] = value;
+        } else {
+            understoodFlags[flagKey] = value;
         }
     }
 
-    requiredFlags.forEach(flag => {
-        if (!understoodFlags[flag]) {
-            let configuredFlag = configuredFlags[flag];
+    // Check required flags
+    requiredFlags.forEach(flagKey => {
+        if (!understoodFlags[flagKey]) {
+            const configuredFlag = configuredFlags[flagKey];
+
             let flagString;
             if (configuredFlag.long) {
                 flagString = `--${configuredFlag.long}`;
                 if (configuredFlag.short) {
                     flagString += ` (-${configuredFlag.short})`;
                 }
-            }
-            else {
+            } else {
                 flagString = `-${configuredFlag.short}`;
             }
 
             throw new Error(`required flag missing: ${flagString}`);
+        }
+    });
+
+    // Apply default values
+    Object.keys(defaultFlags).forEach(flagKey => {
+        if (!understoodFlags[flagKey]) {
+            understoodFlags[flagKey] = defaultFlags[flagKey];
         }
     });
 

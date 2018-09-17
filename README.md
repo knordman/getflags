@@ -20,8 +20,8 @@ recognized or given a value when not expected and vice versa) an
 exception is thrown. Example:
 
 ```js
-let process = require('process');
-let getflags = require('getflags');
+const process = require('process');
+const getflags = require('getflags');
 
 console.log(
     getflags(process.argv.splice(2), [

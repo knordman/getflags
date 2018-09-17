@@ -1,7 +1,8 @@
-getflags_test.js
+test.js
+example.js
+coverage
 .eslintrc.json
 .vscode
-test.js
-coverage
 .nyc_output
 .coveralls.yml
+.prettier.config.js
