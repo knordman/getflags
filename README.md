@@ -13,7 +13,7 @@ npm install --save getflags
 
 ## Usage
 
-The module exports one function that takes as arguments the `argv` 
+The module exports a function that takes as arguments the `argv` 
 array (`splice` from 2 to only include the program arguments), and a
 configuration of recognized flags. When a false flag is detected (not 
 recognized or given a value when not expected and vice versa) an 
@@ -33,6 +33,11 @@ console.log(
                                        each value is pushed to an array, otherwise
                                        the last given value will set the flag value */
             required: true          /* Flag is required */
+        },
+        {
+            short: 'd',
+            withValue: true,
+            default: 'when not specified' /* Default value given flag when not specified */
         },
         {
             long: 'some',
@@ -55,15 +60,15 @@ console.log(
         {
             short: 'g',
             withValue: true
-        }
+        },
     ])
 );
 ```
 
-Saving that into `test.js` and running with:
+Saving that into `example.js` and running with:
 
 ```bash
-node test.js --some 1 \
+node example.js --some 1 \
     --collector first \
     --better=some-text \
     --a -c='second collector' \
@@ -79,7 +84,8 @@ returns:
     better: 'some-text',
     and: true,
     function: true,
-    g: 'and some with space'
+    g: 'and some with space',
+    d: 'when not specified'
 }
 ```
 
