@@ -1,8 +1,8 @@
 test.js
 example.js
 coverage
+prettier.config.js
 .eslintrc.json
 .vscode
 .nyc_output
 .coveralls.yml
-.prettier.config.js
